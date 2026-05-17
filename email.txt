@@ -1,0 +1,90 @@
+public class EmailNotificationSystem {
+
+    // Method 1: Send email WITHOUT attachment
+    public static void sendWithoutAttachment(
+        String recipientEmail,
+        String subject,
+        String messageBody
+    ) {
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+
+        mail.setToAddresses(new String[] { recipientEmail });
+        mail.setSubject(subject);
+        mail.setPlainTextBody(messageBody);
+
+        Messaging.SendEmailResult[] results =
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+
+        if(results[0].isSuccess()) {
+            System.debug('Email sent successfully WITHOUT attachment.');
+        }
+        else {
+            System.debug('Email failed: ' + results[0].getErrors()[0].getMessage());
+        }
+    }
+
+
+    // Method 2: Send email WITH attachment
+    public static void sendWithAttachment(
+        String recipientEmail,
+        String subject,
+        String messageBody
+    ) {
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+
+        mail.setToAddresses(new String[] { recipientEmail });
+        mail.setSubject(subject);
+        mail.setPlainTextBody(messageBody);
+
+        // Creating attachment inside Apex
+        Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+
+        attachment.setFileName('Notification.txt');
+        attachment.setContentType('text/plain');
+
+        String fileContent =
+            'Email Notification Attachment\n' +
+            '--------------------------------\n' +
+            'Recipient Email: ' + recipientEmail + '\n' +
+            'Subject: ' + subject + '\n\n' +
+            'Message Body:\n' + messageBody + '\n\n' +
+            'This file was generated and attached using Salesforce Apex.';
+
+        attachment.setBody(Blob.valueOf(fileContent));
+
+        mail.setFileAttachments(new Messaging.EmailFileAttachment[] { attachment });
+
+        Messaging.SendEmailResult[] results =
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+
+        if(results[0].isSuccess()) {
+            System.debug('Email sent successfully WITH attachment.');
+        }
+        else {
+            System.debug('Email failed: ' + results[0].getErrors()[0].getMessage());
+        }
+    }
+
+
+    // Menu method
+    public static void showMenu() {
+        System.debug('========== EMAIL NOTIFICATION SYSTEM ==========');
+        System.debug('1. Send Email Without Attachment');
+        System.debug('2. Send Email With Attachment');
+        System.debug('Use Execute Anonymous Window to call the required method.');
+    }
+}
+
+
+
+EmailNotificationSystem.showMenu();
+EmailNotificationSystem.sendWithoutAttachment(
+    'receiver@gmail.com',
+    'Test Email from Salesforce',
+    'Hello, this is an email notification sent from Salesforce Apex without attachment.'
+);
+EmailNotificationSystem.sendWithAttachment(
+    'receiver@gmail.com',
+    'Test Email with Attachment from Salesforce',
+    'Hello, this email contains a text file attachment generated using Apex.'
+);

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MindCare Chatbot</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f5f7ff;
+        }
+
+        .navbar{
+            background:#ffb6c1;
+            padding:15px;
+            color:white;
+            text-align:center;
+            font-size:24px;
+            font-weight:bold;
+        }
+
+        .hero{
+            text-align:center;
+            padding:40px;
+            background:#d6e4ff;
+        }
+
+        .hero h1{
+            color:#444;
+        }
+
+        .hero p{
+            color:#666;
+            margin-top:10px;
+        }
+
+        .container{
+            display:flex;
+            justify-content:center;
+            margin-top:30px;
+        }
+
+        .chatbot{
+            width:350px;
+            background:white;
+            border:1px solid #ccc;
+        }
+
+        .chat-header{
+            background:#87a8ff;
+            color:white;
+            padding:10px;
+            text-align:center;
+        }
+
+        .chat-box{
+            height:300px;
+            overflow-y:auto;
+            padding:10px;
+            background:#fafafa;
+        }
+
+        .message{
+            padding:8px;
+            margin:8px 0;
+            border-radius:5px;
+            width:fit-content;
+            max-width:80%;
+        }
+
+        .bot{
+            background:#ffd6e0;
+        }
+
+        .user{
+            background:#87a8ff;
+            color:white;
+            margin-left:auto;
+        }
+
+        .input-area{
+            display:flex;
+            border-top:1px solid #ccc;
+        }
+
+        .input-area input{
+            flex:1;
+            padding:10px;
+            border:none;
+            outline:none;
+        }
+
+        .input-area button{
+            padding:10px;
+            border:none;
+            background:#ffb6c1;
+            color:white;
+            cursor:pointer;
+        }
+
+        .footer{
+            margin-top:40px;
+            text-align:center;
+            padding:15px;
+            background:#ffb6c1;
+            color:white;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        MindCare
+    </div>
+
+    <div class="hero">
+        <h1>Mental Health Support Chatbot</h1>
+        <p>A simple chatbot that helps users talk about stress, anxiety and emotions.</p>
+    </div>
+
+    <div class="container">
+
+        <div class="chatbot">
+
+            <div class="chat-header">
+                Chat Support
+            </div>
+
+            <div class="chat-box" id="chatBox">
+
+                <div class="message bot">
+                    Hello. How are you feeling today?
+                </div>
+
+            </div>
+
+            <div class="input-area">
+
+                <input type="text"
+                       id="userInput"
+                       placeholder="Type message..."
+                       onkeypress="handleKey(event)">
+
+                <button onclick="sendMessage()">Send</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Mental Health Chatbot Project
+    </div>
+
+<script>
+
+function addMessage(text, sender){
+
+    let chatBox = document.getElementById("chatBox");
+
+    let div = document.createElement("div");
+
+    div.classList.add("message");
+    div.classList.add(sender);
+
+    div.innerText = text;
+
+    chatBox.appendChild(div);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function botReply(msg){
+
+    msg = msg.toLowerCase();
+
+    if(msg.includes("sad")){
+        return "I am sorry you are feeling sad. Try taking rest and talking to someone you trust.";
+    }
+
+    else if(msg.includes("stress") || msg.includes("stressed")){
+        return "Stress can be difficult. Try relaxing and taking deep breaths.";
+    }
+
+    else if(msg.includes("anxiety") || msg.includes("anxious")){
+        return "Try to stay calm and focus on one thing at a time.";
+    }
+
+    else if(msg.includes("happy")){
+        return "That is good to hear.";
+    }
+
+    else if(msg.includes("hello") || msg.includes("hi")){
+        return "Hello. How can I help you?";
+    }
+
+    else if(msg.includes("bye")){
+        return "Goodbye. Take care.";
+    }
+
+    else{
+        return "Tell me more about how you are feeling.";
+    }
+}
+
+function sendMessage(){
+
+    let input = document.getElementById("userInput");
+
+    let text = input.value.trim();
+
+    if(text === "")
+        return;
+
+    addMessage(text, "user");
+
+    setTimeout(function(){
+
+        let reply = botReply(text);
+
+        addMessage(reply, "bot");
+
+    }, 500);
+
+    input.value = "";
+}
+
+function handleKey(event){
+
+    if(event.key === "Enter"){
+        sendMessage();
+    }
+}
+
+</script>
+
+</body>

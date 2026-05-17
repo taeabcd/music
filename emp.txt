@@ -1,0 +1,269 @@
+EMPLOYEE MANAGEMENT SYSTEM IN SALESFORCE
+Console Based Apex Program
+
+====================================================================
+AIM
+====================================================================
+
+To develop a menu-driven Employee Management System in Salesforce
+using Apex programming language. The system manages employee records
+such as Emp ID, Emp Name, Email, Birth Date, and Department.
+
+====================================================================
+REQUIREMENTS
+====================================================================
+
+1. Salesforce Developer Account
+2. Custom Object
+3. Custom Fields
+4. Apex Class
+5. Developer Console
+6. Execute Anonymous Window
+
+====================================================================
+STEP 1: CREATE CUSTOM OBJECT
+====================================================================
+
+Go to:
+
+Setup → Object Manager → Create → Custom Object
+
+Enter the following details:
+
+Label: Employee
+Plural Label: Employees
+Object Name: Employee
+Record Name: Employee Name
+Data Type: Text
+
+Click Save.
+
+The API name of the object will be:
+
+Employee__c
+
+====================================================================
+STEP 2: CREATE CUSTOM FIELDS
+====================================================================
+
+Go to:
+
+Object Manager → Employee → Fields & Relationships → New
+
+Create the following fields:
+
+--------------------------------------------------------------------
+FIELD 1: Emp ID
+--------------------------------------------------------------------
+
+Data Type: Number
+Field Label: Emp ID
+Length: 18
+Decimal Places: 0
+Field Name: Emp_ID
+API Name: Emp_ID__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 2: Email
+--------------------------------------------------------------------
+
+Data Type: Email
+Field Label: Email
+Field Name: Email
+API Name: Email__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 3: Birth Date
+--------------------------------------------------------------------
+
+Data Type: Date
+Field Label: Birth Date
+Field Name: Birth_Date
+API Name: Birth_Date__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 4: Department
+--------------------------------------------------------------------
+
+Data Type: Text
+Field Label: Department
+Length: 50
+Field Name: Department
+API Name: Department__c
+
+Click Next → Next → Save
+
+====================================================================
+IMPORTANT FIELD API NAMES
+====================================================================
+
+Your field names must exactly match these:
+
+Object API Name: Employee__c
+
+Employee Name: Name
+Emp ID: Emp_ID__c
+Email: Email__c
+Birth Date: Birth_Date__c
+Department: Department__c
+
+====================================================================
+STEP 3: CREATE APEX CLASS
+====================================================================
+
+Go to:
+
+Setup → Apex Classes → New
+
+Class Name:
+
+EmployeeManagementSystem
+
+Paste the following code and click Save.
+
+====================================================================
+APEX CLASS CODE
+====================================================================
+
+public class EmployeeManagementSystem {
+
+    // Method to add employee record
+    public static void addEmployee(
+        Integer empId,
+        String empName,
+        String email,
+        Date birthDate,
+        String department
+    ) {
+        Employee__c emp = new Employee__c();
+
+        emp.Emp_ID__c = empId;
+        emp.Name = empName;
+        emp.Email__c = email;
+        emp.Birth_Date__c = birthDate;
+        emp.Department__c = department;
+
+        insert emp;
+
+        System.debug('Employee Record Added Successfully');
+    }
+
+    // Method to display all employee records
+    public static void displayEmployees() {
+
+        List<Employee__c> empList = [
+            SELECT Id, Emp_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Employee__c
+            ORDER BY Emp_ID__c
+        ];
+
+        if(empList.isEmpty()) {
+            System.debug('No Employee Records Found');
+        }
+        else {
+            System.debug('========== EMPLOYEE RECORDS ==========');
+
+            for(Employee__c emp : empList) {
+                System.debug('Employee ID: ' + emp.Emp_ID__c);
+                System.debug('Employee Name: ' + emp.Name);
+                System.debug('Email: ' + emp.Email__c);
+                System.debug('Birth Date: ' + emp.Birth_Date__c);
+                System.debug('Department: ' + emp.Department__c);
+                System.debug('------------------------------------');
+            }
+        }
+    }
+
+    // Method to search employee by Emp ID
+    public static void searchEmployee(Integer empId) {
+
+        List<Employee__c> empList = [
+            SELECT Id, Emp_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Employee__c
+            WHERE Emp_ID__c = :empId
+        ];
+
+        if(empList.isEmpty()) {
+            System.debug('Employee Record Not Found');
+        }
+        else {
+            for(Employee__c emp : empList) {
+                System.debug('Employee Found');
+                System.debug('Employee ID: ' + emp.Emp_ID__c);
+                System.debug('Employee Name: ' + emp.Name);
+                System.debug('Email: ' + emp.Email__c);
+                System.debug('Birth Date: ' + emp.Birth_Date__c);
+                System.debug('Department: ' + emp.Department__c);
+            }
+        }
+    }
+
+    // Method to update employee record
+    public static void updateEmployee(
+        Integer empId,
+        String newName,
+        String newEmail,
+        Date newBirthDate,
+        String newDepartment
+    ) {
+        List<Employee__c> empList = [
+            SELECT Id, Emp_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Employee__c
+            WHERE Emp_ID__c = :empId
+            LIMIT 1
+        ];
+
+        if(empList.isEmpty()) {
+            System.debug('Employee Record Not Found');
+        }
+        else {
+            Employee__c emp = empList[0];
+
+            emp.Name = newName;
+            emp.Email__c = newEmail;
+            emp.Birth_Date__c = newBirthDate;
+            emp.Department__c = newDepartment;
+
+            update emp;
+
+            System.debug('Employee Record Updated Successfully');
+        }
+    }
+
+    // Method to delete employee record
+    public static void deleteEmployee(Integer empId) {
+
+        List<Employee__c> empList = [
+            SELECT Id, Emp_ID__c, Name
+            FROM Employee__c
+            WHERE Emp_ID__c = :empId
+            LIMIT 1
+        ];
+
+        if(empList.isEmpty()) {
+            System.debug('Employee Record Not Found');
+        }
+        else {
+            delete empList[0];
+            System.debug('Employee Record Deleted Successfully');
+        }
+    }
+
+    // Menu method only for displaying options
+    public static void showMenu() {
+        System.debug('========== EMPLOYEE MANAGEMENT SYSTEM ==========');
+        System.debug('1. Add Employee');
+        System.debug('2. Display Employees');
+        System.debug('3. Search Employee');
+        System.debug('4. Update Employee');
+        System.debug('5. Delete Employee');
+        System.debug('6. Exit');
+        System.debug('Use Execute Anonymous Window to call required method.');
+    }
+}

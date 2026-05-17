@@ -1,0 +1,349 @@
+STUDENT RECORD MANAGEMENT SYSTEM IN SALESFORCE
+Using Apex Programming Language and Visualforce Page
+
+====================================================================
+AIM
+====================================================================
+
+To develop an application in Salesforce using Apex programming language
+and Visualforce Page to manage student records such as Name, Roll No,
+Class, and Mobile No. These records will be stored in a custom object.
+
+====================================================================
+SOFTWARE / REQUIREMENTS
+====================================================================
+
+1. Salesforce Developer Account
+2. Apex Class
+3. Visualforce Page
+4. Custom Object
+5. Custom Fields
+
+====================================================================
+STEP 1: LOGIN TO SALESFORCE
+====================================================================
+
+1. Open Salesforce Developer Org.
+2. Login with your username and password.
+3. Click on the Gear Icon.
+4. Click on Setup.
+
+====================================================================
+STEP 2: CREATE CUSTOM OBJECT
+====================================================================
+
+1. Go to Setup.
+2. Search for Object Manager.
+3. Click on Object Manager.
+4. Click on Create.
+5. Click on Custom Object.
+
+Enter the following details:
+
+Label: Student
+Plural Label: Students
+Object Name: Student
+Record Name: Student Name
+Data Type: Text
+
+6. Check the option:
+   Allow Reports
+   Allow Activities
+   Track Field History if needed
+
+7. Click Save.
+
+The API name of object will be:
+
+Student__c
+
+====================================================================
+STEP 3: CREATE CUSTOM FIELDS
+====================================================================
+
+Go to:
+
+Object Manager → Student → Fields & Relationships → New
+
+--------------------------------------------------
+FIELD 1: Roll No
+--------------------------------------------------
+
+Data Type: Number
+Field Label: Roll No
+Length: 18
+Decimal Places: 0
+Field Name: Roll_No
+API Name: Roll_No__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------
+FIELD 2: Class
+--------------------------------------------------
+
+Data Type: Text
+Field Label: Class
+Length: 50
+Field Name: Class
+API Name: Class__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------
+FIELD 3: Mobile No
+--------------------------------------------------
+
+Data Type: Phone
+Field Label: Mobile No
+Field Name: Mobile_No
+API Name: Mobile_No__c
+
+Click Next → Next → Save
+
+====================================================================
+STEP 4: CREATE APEX CONTROLLER
+====================================================================
+
+1. Go to Setup.
+2. Search Apex Classes.
+3. Click Apex Classes.
+4. Click New.
+5. Paste the following code.
+6. Click Save.
+
+====================================================================
+APEX CLASS CODE
+====================================================================
+
+public class StudentController {
+
+    public Student__c student { get; set; }
+    public List<Student__c> studentList { get; set; }
+
+    // Constructor
+    public StudentController() {
+        student = new Student__c();
+        displayStudents();
+    }
+
+    // Method to save student record
+    public void saveStudent() {
+        insert student;
+        student = new Student__c();
+        displayStudents();
+    }
+
+    // Method to display all student records
+    public void displayStudents() {
+        studentList = [
+            SELECT Id, Name, Roll_No__c, Class__c, Mobile_No__c
+            FROM Student__c
+            ORDER BY CreatedDate DESC
+        ];
+    }
+
+    // Method to delete student record
+    public void deleteStudent() {
+        String studentId = ApexPages.currentPage().getParameters().get('id');
+
+        Student__c s = [
+            SELECT Id
+            FROM Student__c
+            WHERE Id = :studentId
+            LIMIT 1
+        ];
+
+        delete s;
+        displayStudents();
+    }
+}
+
+====================================================================
+STEP 5: CREATE VISUALFORCE PAGE
+====================================================================
+
+1. Go to Setup.
+2. Search Visualforce Pages.
+3. Click Visualforce Pages.
+4. Click New.
+5. Enter Label:
+
+StudentRecordPage
+
+6. Enter Name:
+
+StudentRecordPage
+
+7. Paste the following Visualforce code.
+8. Click Save.
+
+====================================================================
+VISUALFORCE PAGE CODE
+====================================================================
+
+<apex:page controller="StudentController">
+    <apex:form>
+
+        <apex:pageBlock title="Student Record Management System">
+
+            <apex:pageBlockSection title="Enter Student Details" columns="1">
+
+                <apex:inputField value="{!student.Name}" label="Student Name"/>
+                <apex:inputField value="{!student.Roll_No__c}" label="Roll No"/>
+                <apex:inputField value="{!student.Class__c}" label="Class"/>
+                <apex:inputField value="{!student.Mobile_No__c}" label="Mobile No"/>
+
+                <apex:commandButton value="Save Student" action="{!saveStudent}"/>
+
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Student Records">
+
+            <apex:pageBlockTable value="{!studentList}" var="s">
+
+                <apex:column value="{!s.Name}" headerValue="Student Name"/>
+                <apex:column value="{!s.Roll_No__c}" headerValue="Roll No"/>
+                <apex:column value="{!s.Class__c}" headerValue="Class"/>
+                <apex:column value="{!s.Mobile_No__c}" headerValue="Mobile No"/>
+
+                <apex:column headerValue="Action">
+                    <apex:commandLink value="Delete" action="{!deleteStudent}">
+                        <apex:param name="id" value="{!s.Id}"/>
+                    </apex:commandLink>
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+
+    </apex:form>
+</apex:page>
+
+====================================================================
+STEP 6: RUN / EXECUTE THE VISUALFORCE PAGE
+====================================================================
+
+After saving the Visualforce page, open it using:
+
+https://your-domain.my.salesforce.com/apex/StudentRecordPage
+
+OR
+
+1. Go to Setup.
+2. Search Visualforce Pages.
+3. Open StudentRecordPage.
+4. Click Preview.
+
+====================================================================
+STEP 7: TEST THE APPLICATION
+====================================================================
+
+Enter sample student details:
+
+Student Name: Rahul Sharma
+Roll No: 101
+Class: TE Computer
+Mobile No: 9876543210
+
+Click on:
+
+Save Student
+
+The record will be saved and displayed in the table below.
+
+====================================================================
+STEP 8: CHECK SAVED RECORDS IN CUSTOM OBJECT
+====================================================================
+
+1. Go to App Launcher.
+2. Search Students.
+3. Open Students tab.
+4. You can see the student records saved in the object.
+
+If Students tab is not visible, create a tab:
+
+Setup → Tabs → Custom Object Tabs → New → Select Student object → Save
+
+====================================================================
+OPTIONAL: EXECUTE USING ANONYMOUS WINDOW
+====================================================================
+
+This code is only for testing insert operation from Developer Console.
+
+Steps:
+
+1. Click Gear Icon.
+2. Click Developer Console.
+3. Click Debug.
+4. Click Open Execute Anonymous Window.
+5. Paste the following code.
+6. Click Execute.
+
+====================================================================
+EXECUTE ANONYMOUS CODE
+====================================================================
+
+Student__c s = new Student__c();
+
+s.Name = 'Test Student';
+s.Roll_No__c = 1;
+s.Class__c = 'TE Computer';
+s.Mobile_No__c = '9876543210';
+
+insert s;
+
+System.debug('Student Record Inserted Successfully');
+
+====================================================================
+OPTIONAL: VIEW RECORDS USING ANONYMOUS WINDOW
+====================================================================
+
+List<Student__c> students = [
+    SELECT Id, Name, Roll_No__c, Class__c, Mobile_No__c
+    FROM Student__c
+];
+
+for(Student__c s : students) {
+    System.debug('Name: ' + s.Name);
+    System.debug('Roll No: ' + s.Roll_No__c);
+    System.debug('Class: ' + s.Class__c);
+    System.debug('Mobile No: ' + s.Mobile_No__c);
+}
+
+====================================================================
+ALGORITHM
+====================================================================
+
+1. Start.
+2. Create a custom object named Student.
+3. Add fields such as Roll No, Class, and Mobile No.
+4. Create an Apex controller named StudentController.
+5. Declare a Student__c variable to accept student details.
+6. Declare a List<Student__c> variable to store multiple records.
+7. Use insert DML operation to save the student record.
+8. Use SOQL query to fetch all student records.
+9. Display records using Visualforce pageBlockTable.
+10. Provide delete functionality using record Id.
+11. Stop.
+
+====================================================================
+OUTPUT
+====================================================================
+
+The Visualforce page displays:
+
+1. Student entry form.
+2. Save Student button.
+3. Table showing saved student records.
+4. Delete option for each record.
+
+====================================================================
+CONCLUSION
+====================================================================
+
+Thus, the Student Record Management System was successfully developed
+in Salesforce using Apex Controller, Visualforce Page, and Custom Object.
+The application allows users to insert, display, and delete student records.

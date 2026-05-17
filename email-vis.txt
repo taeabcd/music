@@ -1,0 +1,247 @@
+public class EmailNotificationVFController {
+
+    public String recipientEmail { get; set; }
+    public String subjectText { get; set; }
+    public String messageBody { get; set; }
+    public Boolean attachFile { get; set; }
+
+    public EmailNotificationVFController() {
+        attachFile = false;
+    }
+
+    public void sendEmail() {
+
+        // Check empty email
+        if(String.isBlank(recipientEmail)) {
+            ApexPages.addMessage(
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    'Email address cannot be empty.'
+                )
+            );
+            return;
+        }
+
+        // Validate email format
+        Pattern emailPattern = Pattern.compile(
+            '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
+        );
+
+        Matcher emailMatcher = emailPattern.matcher(recipientEmail);
+
+        if(!emailMatcher.matches()) {
+            ApexPages.addMessage(
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    'Invalid Email ID. Please enter a valid email address.'
+                )
+            );
+            return;
+        }
+
+        // Check subject
+        if(String.isBlank(subjectText)) {
+            ApexPages.addMessage(
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    'Subject cannot be empty.'
+                )
+            );
+            return;
+        }
+
+        // Check message body
+        if(String.isBlank(messageBody)) {
+            ApexPages.addMessage(
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    'Message body cannot be empty.'
+                )
+            );
+            return;
+        }
+
+        try {
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+
+            mail.setToAddresses(new String[] { recipientEmail });
+            mail.setSubject(subjectText);
+            mail.setPlainTextBody(messageBody);
+
+            // If user selects attachment checkbox
+            if(attachFile == true) {
+
+                Messaging.EmailFileAttachment attachment =
+                    new Messaging.EmailFileAttachment();
+
+                attachment.setFileName('EmailNotification.txt');
+                attachment.setContentType('text/plain');
+
+                String fileContent =
+                    'Salesforce Email Notification Attachment\n' +
+                    '----------------------------------------\n' +
+                    'Recipient Email: ' + recipientEmail + '\n' +
+                    'Subject: ' + subjectText + '\n\n' +
+                    'Message Body:\n' + messageBody + '\n\n' +
+                    'This file was generated using Apex.';
+
+                attachment.setBody(Blob.valueOf(fileContent));
+
+                mail.setFileAttachments(
+                    new Messaging.EmailFileAttachment[] { attachment }
+                );
+            }
+
+            Messaging.SendEmailResult[] results =
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+
+            if(results[0].isSuccess()) {
+
+                if(attachFile == true) {
+                    ApexPages.addMessage(
+                        new ApexPages.Message(
+                            ApexPages.Severity.CONFIRM,
+                            'Email sent successfully with attachment.'
+                        )
+                    );
+                }
+                else {
+                    ApexPages.addMessage(
+                        new ApexPages.Message(
+                            ApexPages.Severity.CONFIRM,
+                            'Email sent successfully without attachment.'
+                        )
+                    );
+                }
+
+                // Clear form after successful email
+                recipientEmail = '';
+                subjectText = '';
+                messageBody = '';
+                attachFile = false;
+            }
+            else {
+                ApexPages.addMessage(
+                    new ApexPages.Message(
+                        ApexPages.Severity.ERROR,
+                        'Email sending failed: ' +
+                        results[0].getErrors()[0].getMessage()
+                    )
+                );
+            }
+        }
+        catch(Exception e) {
+            ApexPages.addMessage(
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    'Error: ' + e.getMessage()
+                )
+            );
+        }
+    }
+}
+
+<apex:page controller="EmailNotificationVFController">
+
+    <apex:form>
+
+        <apex:pageBlock title="Email Notification System">
+
+            <apex:pageMessages />
+
+            <apex:pageBlockSection title="Enter Email Details" columns="1">
+
+                <apex:inputText 
+                    value="{!recipientEmail}" 
+                    label="Recipient Email Address"/>
+
+                <apex:inputText 
+                    value="{!subjectText}" 
+                    label="Subject"/>
+
+                <apex:inputTextarea 
+                    value="{!messageBody}" 
+                    label="Message Body" 
+                    rows="5" 
+                    cols="50"/>
+
+                <apex:inputCheckbox 
+                    value="{!attachFile}" 
+                    label="Send With Attachment"/>
+
+                <apex:commandButton 
+                    value="Send Email" 
+                    action="{!sendEmail}"/>
+
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
+
+
+String csvData = 'Name,Email,Department\n' +
+                 'Rahul,rahul@gmail.com,IT\n' +
+                 'Priya,priya@gmail.com,HR';
+
+Blob fileBlob = Blob.valueOf(csvData);
+
+Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+attachment.setFileName('employees.csv');
+attachment.setContentType('text/csv');
+attachment.setBody(fileBlob);
+
+PageReference pdfPage = Page.EmployeePDFPage;
+Blob fileBlob = pdfPage.getContentAsPDF();
+
+Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+attachment.setFileName('employee.pdf');
+attachment.setContentType('application/pdf');
+attachment.setBody(fileBlob);
+
+ContentVersion cv = [
+    SELECT VersionData
+    FROM ContentVersion
+    WHERE Title = 'sampleImage'
+    LIMIT 1
+];
+
+Blob fileBlob = cv.VersionData;
+
+Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+attachment.setFileName('sampleImage.jpg');
+attachment.setContentType('image/jpeg');
+attachment.setBody(fileBlob);
+
+
+ContentVersion cv = [
+    SELECT VersionData
+    FROM ContentVersion
+    WHERE Title = 'sampleImage'
+    LIMIT 1
+];
+
+Blob fileBlob = cv.VersionData;
+
+Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+attachment.setFileName('sampleImage.png');
+attachment.setContentType('image/png');
+attachment.setBody(fileBlob);
+
+ContentVersion cv = [
+    SELECT VersionData
+    FROM ContentVersion
+    WHERE Title = 'EmployeeReport'
+    LIMIT 1
+];
+
+Blob fileBlob = cv.VersionData;
+
+Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+attachment.setFileName('EmployeeReport.docx');
+attachment.setContentType('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+attachment.setBody(fileBlob);
+
+

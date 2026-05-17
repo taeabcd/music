@@ -1,0 +1,394 @@
+BANK ACCOUNT SYSTEM IN SALESFORCE
+Console Based Apex Program
+
+====================================================================
+AIM
+====================================================================
+
+To develop a menu-driven Bank Account System in Salesforce using Apex
+programming language. The system manages customer records such as
+Customer ID, Customer Name, Email, Birth Date, and Department.
+
+====================================================================
+STEP 1: CREATE CUSTOM OBJECT
+====================================================================
+
+Go to:
+
+Setup → Object Manager → Create → Custom Object
+
+Enter the following details:
+
+Label: Bank Customer
+Plural Label: Bank Customers
+Object Name: Bank_Customer
+Record Name: Customer Name
+Data Type: Text
+
+Click Save.
+
+Object API Name:
+
+Bank_Customer__c
+
+====================================================================
+STEP 2: CREATE CUSTOM FIELDS
+====================================================================
+
+Go to:
+
+Object Manager → Bank Customer → Fields & Relationships → New
+
+Create only these fields:
+
+--------------------------------------------------------------------
+FIELD 1: Customer ID
+--------------------------------------------------------------------
+
+Data Type: Number
+Field Label: Customer ID
+Length: 18
+Decimal Places: 0
+Field Name: Customer_ID
+API Name: Customer_ID__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 2: Email
+--------------------------------------------------------------------
+
+Data Type: Email
+Field Label: Email
+Field Name: Email
+API Name: Email__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 3: Birth Date
+--------------------------------------------------------------------
+
+Data Type: Date
+Field Label: Birth Date
+Field Name: Birth_Date
+API Name: Birth_Date__c
+
+Click Next → Next → Save & New
+
+--------------------------------------------------------------------
+FIELD 4: Department
+--------------------------------------------------------------------
+
+Data Type: Text
+Field Label: Department
+Length: 50
+Field Name: Department
+API Name: Department__c
+
+Click Next → Next → Save
+
+====================================================================
+IMPORTANT API NAMES
+====================================================================
+
+Object API Name:
+
+Bank_Customer__c
+
+Field API Names:
+
+Customer Name: Name
+Customer ID: Customer_ID__c
+Email: Email__c
+Birth Date: Birth_Date__c
+Department: Department__c
+
+====================================================================
+STEP 3: CREATE APEX CLASS
+====================================================================
+
+Go to:
+
+Setup → Apex Classes → New
+
+Class Name:
+
+BankAccountSystem
+
+Paste the following code and click Save.
+
+====================================================================
+APEX CLASS CODE
+====================================================================
+
+public class BankAccountSystem {
+
+    // Method to add new customer record
+    public static void addCustomer(
+        Integer customerId,
+        String customerName,
+        String email,
+        Date birthDate,
+        String department
+    ) {
+        Bank_Customer__c customer = new Bank_Customer__c();
+
+        customer.Customer_ID__c = customerId;
+        customer.Name = customerName;
+        customer.Email__c = email;
+        customer.Birth_Date__c = birthDate;
+        customer.Department__c = department;
+
+        insert customer;
+
+        System.debug('Customer Record Added Successfully');
+    }
+
+    // Method to display all customer records
+    public static void displayCustomers() {
+
+        List<Bank_Customer__c> customerList = [
+            SELECT Id, Customer_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Bank_Customer__c
+            ORDER BY Customer_ID__c
+        ];
+
+        if(customerList.isEmpty()) {
+            System.debug('No Customer Records Found');
+        }
+        else {
+            System.debug('========== CUSTOMER RECORDS ==========');
+
+            for(Bank_Customer__c customer : customerList) {
+                System.debug('Customer ID: ' + customer.Customer_ID__c);
+                System.debug('Customer Name: ' + customer.Name);
+                System.debug('Email: ' + customer.Email__c);
+                System.debug('Birth Date: ' + customer.Birth_Date__c);
+                System.debug('Department: ' + customer.Department__c);
+                System.debug('-------------------------------------');
+            }
+        }
+    }
+
+    // Method to search customer by Customer ID
+    public static void searchCustomer(Integer customerId) {
+
+        List<Bank_Customer__c> customerList = [
+            SELECT Id, Customer_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Bank_Customer__c
+            WHERE Customer_ID__c = :customerId
+        ];
+
+        if(customerList.isEmpty()) {
+            System.debug('Customer Record Not Found');
+        }
+        else {
+            for(Bank_Customer__c customer : customerList) {
+                System.debug('Customer Found');
+                System.debug('Customer ID: ' + customer.Customer_ID__c);
+                System.debug('Customer Name: ' + customer.Name);
+                System.debug('Email: ' + customer.Email__c);
+                System.debug('Birth Date: ' + customer.Birth_Date__c);
+                System.debug('Department: ' + customer.Department__c);
+            }
+        }
+    }
+
+    // Method to update customer details
+    public static void updateCustomer(
+        Integer customerId,
+        String newName,
+        String newEmail,
+        Date newBirthDate,
+        String newDepartment
+    ) {
+        List<Bank_Customer__c> customerList = [
+            SELECT Id, Customer_ID__c, Name, Email__c, Birth_Date__c, Department__c
+            FROM Bank_Customer__c
+            WHERE Customer_ID__c = :customerId
+            LIMIT 1
+        ];
+
+        if(customerList.isEmpty()) {
+            System.debug('Customer Record Not Found');
+        }
+        else {
+            Bank_Customer__c customer = customerList[0];
+
+            customer.Name = newName;
+            customer.Email__c = newEmail;
+            customer.Birth_Date__c = newBirthDate;
+            customer.Department__c = newDepartment;
+
+            update customer;
+
+            System.debug('Customer Record Updated Successfully');
+        }
+    }
+
+    // Method to delete customer record
+    public static void deleteCustomer(Integer customerId) {
+
+        List<Bank_Customer__c> customerList = [
+            SELECT Id, Customer_ID__c, Name
+            FROM Bank_Customer__c
+            WHERE Customer_ID__c = :customerId
+            LIMIT 1
+        ];
+
+        if(customerList.isEmpty()) {
+            System.debug('Customer Record Not Found');
+        }
+        else {
+            delete customerList[0];
+            System.debug('Customer Record Deleted Successfully');
+        }
+    }
+
+    // Menu method
+    public static void showMenu() {
+        System.debug('========== BANK ACCOUNT SYSTEM ==========');
+        System.debug('1. Add Customer');
+        System.debug('2. Display Customers');
+        System.debug('3. Search Customer');
+        System.debug('4. Update Customer');
+        System.debug('5. Delete Customer');
+        System.debug('6. Exit');
+        System.debug('Use Execute Anonymous Window to call required method.');
+    }
+}
+
+====================================================================
+HOW TO EXECUTE IN DEVELOPER CONSOLE
+====================================================================
+
+Go to:
+
+Gear Icon → Developer Console → Debug → Open Execute Anonymous Window
+
+First run:
+
+BankAccountSystem.showMenu();
+
+Then open:
+
+Logs → Open Latest Log → Debug Only
+
+====================================================================
+1. ADD CUSTOMER
+====================================================================
+
+BankAccountSystem.addCustomer(
+    101,
+    'Rahul Sharma',
+    'rahul@gmail.com',
+    Date.newInstance(2002, 5, 15),
+    'Savings Department'
+);
+
+Expected Output:
+
+Customer Record Added Successfully
+
+====================================================================
+2. ADD MORE CUSTOMER RECORDS
+====================================================================
+
+BankAccountSystem.addCustomer(
+    102,
+    'Priya Patil',
+    'priya@gmail.com',
+    Date.newInstance(2001, 8, 20),
+    'Loan Department'
+);
+
+BankAccountSystem.addCustomer(
+    103,
+    'Amit Jadhav',
+    'amit@gmail.com',
+    Date.newInstance(2000, 12, 10),
+    'Finance Department'
+);
+
+====================================================================
+3. DISPLAY ALL CUSTOMERS
+====================================================================
+
+BankAccountSystem.displayCustomers();
+
+Expected Output:
+
+========== CUSTOMER RECORDS ==========
+Customer ID: 101
+Customer Name: Rahul Sharma
+Email: rahul@gmail.com
+Birth Date: 2002-05-15
+Department: Savings Department
+
+====================================================================
+4. SEARCH CUSTOMER
+====================================================================
+
+BankAccountSystem.searchCustomer(101);
+
+Expected Output:
+
+Customer Found
+Customer ID: 101
+Customer Name: Rahul Sharma
+Email: rahul@gmail.com
+Birth Date: 2002-05-15
+Department: Savings Department
+
+====================================================================
+5. UPDATE CUSTOMER
+====================================================================
+
+BankAccountSystem.updateCustomer(
+    101,
+    'Rahul Sharma Updated',
+    'rahul.updated@gmail.com',
+    Date.newInstance(2002, 5, 15),
+    'Main Branch'
+);
+
+Expected Output:
+
+Customer Record Updated Successfully
+
+====================================================================
+6. DELETE CUSTOMER
+====================================================================
+
+BankAccountSystem.deleteCustomer(103);
+
+Expected Output:
+
+Customer Record Deleted Successfully
+
+====================================================================
+ALGORITHM
+====================================================================
+
+1. Start.
+2. Create a custom object named Bank Customer.
+3. Create fields Customer ID, Email, Birth Date, and Department.
+4. Create an Apex class named BankAccountSystem.
+5. Define addCustomer() method to insert customer records.
+6. Define displayCustomers() method to display all records.
+7. Define searchCustomer() method to search customer by Customer ID.
+8. Define updateCustomer() method to modify customer details.
+9. Define deleteCustomer() method to delete customer record.
+10. Define showMenu() method to display menu options.
+11. Execute methods using Developer Console.
+12. Stop.
+
+====================================================================
+CONCLUSION
+====================================================================
+
+Thus, a console-based Bank Account System was successfully developed
+in Salesforce using Apex programming language and a Custom Object.
+The system performs operations such as adding, displaying, searching,
+updating, and deleting customer records.

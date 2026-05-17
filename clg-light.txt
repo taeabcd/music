@@ -1,0 +1,150 @@
+ STEP 1: CREATE STUDENT OBJECT
+1.	Go to Setup
+2.	Click Object Manager
+3.	Click Create → Custom Object
+Fill:
+•	Label → Student Record
+•	Object Name → Student_Record
+ Click Save
+________________________________________
+ STEP 2: CREATE STUDENT FIELDS
+Go to:
+ Student Record → Fields & Relationships → New
+Create:
+🔹 Roll Number
+•	Type → Number
+•	Label → Roll_Number
+________________________________________
+🔹 Marks
+•	Type → Number
+________________________________________
+🔹 Email
+•	Type → Email
+________________________________________
+🔹 Department
+•	Type → Picklist
+ Values:
+•	IT
+•	CS
+•	EXTC
+•	Mechanical
+________________________________________
+ Name field already exists (Student Name)
+________________________________________
+ STEP 3: STUDENT VALIDATION RULES
+Go to:
+ Validation Rules → New
+________________________________________
+ 1. Marks between 0 and 100
+Steps:
+•	Rule Name → Marks_Validation 
+Formula:
+OR(Marks__c < 0, Marks__c > 100)
+Error Message:
+ Marks must be between 0 and 100
+ Error Location → Field: Marks
+ Click Save
+________________________________________
+ 2. Roll Number > 0
+•	Rule Name → Roll_Validation 
+Roll_Number__c <= 0
+Error:
+ Roll number must be greater than 0
+________________________________________
+ 3. Email must contain @
+•	Rule Name → Email_Validation 
+NOT(CONTAINS(Email__c, "@"))
+Error:
+ Invalid email format
+________________________________________
+ 4. Name cannot be blank
+•	Rule Name → Name_Validation 
+ISBLANK(Name)
+Error:
+ Name cannot be empty
+________________________________________
+ 5. Department must be selected
+•	Rule Name → Dept_Validation 
+ISBLANK(TEXT(Department__c))
+Error:
+ Please select a department
+________________________________________
+ Add error message + Save + Activate each
+________________________________________
+ STEP 4: CREATE FACULTY OBJECT
+1.	Go to Object Manager → Create
+2.	Label → Faculty
+________________________________________ STEP 5: FACULTY FIELDS
+Create:
+Field	Type
+Faculty_ID	Number
+Email	Email
+Salary	Number
+Joining_Date	Date
+Department	Picklist
+
+FACULTY VALIDATION RULES
+
+ 1. Name ≥ 3 characters
+•	Rule Name → Faculty_Name_Validation 
+LEN(Name) < 3
+Error:
+ Name must be at least 3 characters
+
+ 2. Faculty ID > 0
+•	Rule Name → Faculty_ID_Validation 
+Faculty_ID__c <= 0
+Error:
+ Faculty ID must be greater than 0
+
+ 3. Faculty ID UNIQUE
+ Not validation rule!
+ Go to field → Edit → tick:
+ Unique
+
+ 4. Salary range
+•	Rule Name → Salary_Validation 
+OR(Salary__c < 10000, Salary__c > 500000)
+Error:
+ Salary must be between 10,000 and 500,000
+
+ 5. Joining date not future
+•	Rule Name → Date_Validation 
+Joining_Date__c > TODAY()
+Error:
+ Joining date cannot be in future
+
+ Save + Activate all
+________________________________________
+ STEP 7: CREATE TABS (VERY IMPORTANT )
+1.	Go to Setup → Tabs
+2.	Under Custom Object Tabs → New
+________________________________________
+ Create:
+•	Tab for Student Record
+•	Tab for Faculty
+Save
+________________________________________
+ STEP 8: CREATE LIGHTNING APP
+1.	Go to App Manager
+2.	Click New Lightning App
+Fill:
+•	Name → College Management App
+ Next → Next → Next
+________________________________________
+ Add Navigation Items
+ Add:
+•	Student Record
+•	Faculty
+ Move to Selected Items ➡️
+ Save & Finish
+________________________________________
+ STEP 9: ASSIGN APP (IMPORTANT)
+While editing app:
+ Ensure System Administrator ✔ selected
+________________________________________
+STEP 10: OPEN APP
+1.	Click App Launcher (9 dots)
+2.	Search:
+ College Management App
+3.	Open

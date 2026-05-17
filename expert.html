@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Expert System</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f2f2f2;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .chatbot{
+            width:400px;
+            background:white;
+            padding:20px;
+            border:1px solid #ccc;
+        }
+
+        h2{
+            text-align:center;
+            color:#0b5ed7;
+        }
+
+        .chatbox{
+            height:300px;
+            overflow-y:auto;
+            background:#f9f9f9;
+            border:1px solid #ddd;
+            padding:10px;
+        }
+
+        .msg{
+            margin:10px 0;
+            padding:8px;
+        }
+
+        .bot{
+            background:#e3f2fd;
+        }
+
+        .user{
+            background:#d1ffd1;
+            text-align:right;
+        }
+
+        input{
+            width:70%;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        button{
+            padding:10px;
+            background:#0b5ed7;
+            color:white;
+            border:none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="chatbot">
+
+        <h2>Hospital Chatbot</h2>
+
+        <div class="chatbox" id="chatbox">
+
+            <div class="msg bot">
+                Hello! How can I help you?
+            </div>
+
+        </div>
+
+        <input type="text" id="input" placeholder="Enter your query">
+
+        <button onclick="reply()">Send</button>
+
+    </div>
+
+    <script>
+
+        function reply(){
+
+            let text =
+            document.getElementById("input").value.toLowerCase();
+
+            let chat =
+            document.getElementById("chatbox");
+
+            if(text=="")
+                return;
+
+            // User message
+
+            chat.innerHTML +=
+            "<div class='msg user'>" + text + "</div>";
+
+            let ans="";
+
+            // Rules
+
+            if(text.includes("appointment")){
+                ans="You can book appointment at reception.";
+            }
+
+            else if(text.includes("doctor")){
+                ans="Doctors are available from 9 AM to 5 PM.";
+            }
+
+            else if(text.includes("emergency")){
+                ans="Emergency services are available 24/7.";
+            }
+
+            else if(text.includes("ambulance")){
+                ans="Call 108 for ambulance service.";
+            }
+
+            else if(text.includes("pharmacy")){
+                ans="Pharmacy is open till 10 PM.";
+            }
+
+            else if(text.includes("bill")){
+                ans="Billing counter is near reception.";
+            }
+
+            else if(text.includes("report")){
+                ans="Reports are available in laboratory section.";
+            }
+
+            else if(text.includes("insurance")){
+                ans="Please carry insurance documents.";
+            }
+
+            else{
+                ans="Please contact hospital reception.";
+            }
+
+            // Bot reply
+
+            chat.innerHTML +=
+            "<div class='msg bot'>" + ans + "</div>";
+
+            document.getElementById("input").value="";
+
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+    </script>
+
+</body>
+</html>

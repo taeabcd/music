@@ -1,0 +1,39 @@
+cd ~
+chmod 600 ~/new.pem 2>/dev/null
+rm ~/new.pem 2>/dev/null
+cp /mnt/c/Users/grish/Downloads/new.pem ~/
+chmod 400 ~/new.pem
+ls -l ~/new.pem
+scp -i ~/new.pem ~/new.pem ubuntu@13.61.10.237:~
+
+VM-A:
+ssh -i key.pem ubuntu@public-ip-of-VM-A
+nano file.txt
+cat file.txt
+
+VM-B:
+scp -i key.pem key.pem ubuntu@public-ip-of-VM-A:/home/ubuntu/
+
+Now login to VM-A:
+ssh -i grishma.pem ubuntu@public-ip-of-VM-A
+
+Set correct permission for key:
+chmod 400 grishma.pem
+
+Transfer File from VM-A to VM-B
+Run this command from VM-A:
+scp -i grishma.pem file.txt ubuntu@private-ip-of-VM-B:/home/ubuntu/
+
+
+Verify File on VM-B
+Login to VM-B:
+ssh -i grishma.pem ubuntu@public-ip-of-VM-B
+
+Check file:
+ls
+cat file.txt
+
+cp /mnt/c/Users/grish/Downloads/new.pem ~/
+cd ~
+chmod 400 new.pem
+ssh -i new.pem ubuntu@13.61.10.237

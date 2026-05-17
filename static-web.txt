@@ -1,0 +1,73 @@
+cp /mnt/c/Users/grish/Downloads/static.pem ~/
+cd ~
+chmod 400 static.pem
+ssh -i static.pem ubuntu@16.171.135.4
+
+Step 4: Update Server Packages
+sudo apt update
+sudo apt upgrade -y
+
+Step 5: Install Nginx Web Server
+sudo apt install nginx -y
+
+Step 6: Start and Check Nginx Service
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+
+Step 7: Create Static Website Files
+
+Go to default web directory:
+cd /var/www/html
+
+Remove default page:
+sudo rm index.nginx-debian.html
+
+Create new HTML file:
+sudo nano index.html
+
+Paste this code:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Static Website</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            padding-top: 120px;
+        }
+        .box {
+            background: rgba(255,255,255,0.15);
+            padding: 40px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        h1 {
+            font-size: 40px;
+        }
+        p {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Welcome to My Static Website</h1>
+        <p>Deployed successfully on Cloud Virtual Machine</p>
+        <p>Server: Ubuntu + Nginx</p>
+    </div>
+</body>
+</html>
+
+Save file:
+Press CTRL + O, then Enter, then CTRL + X.
+
+Step 8: Restart Nginx
+sudo systemctl restart nginx
+
+Step 9: Access Website Publicly
+http://public-ip-address

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Chatbot</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f2f2f2;
+        }
+
+        /* Landing Page */
+
+        .main{
+            width:70%;
+            padding:50px;
+        }
+
+        h1{
+            color:#0b5ed7;
+        }
+
+        .section{
+            background:white;
+            padding:20px;
+            margin-top:20px;
+            border:1px solid #ccc;
+        }
+
+        /* Chatbot */
+
+        .chatbot{
+            position:fixed;
+            right:20px;
+            top:20px;
+            width:300px;
+            background:white;
+            border:1px solid #ccc;
+            padding:15px;
+        }
+
+        .chatbox{
+            height:300px;
+            overflow-y:auto;
+            background:#f9f9f9;
+            padding:10px;
+            border:1px solid #ddd;
+        }
+
+        .msg{
+            margin:8px 0;
+            padding:8px;
+        }
+
+        .bot{
+            background:#e3f2fd;
+        }
+
+        .user{
+            background:#d1ffd1;
+            text-align:right;
+        }
+
+        input{
+            width:70%;
+            padding:8px;
+            margin-top:10px;
+        }
+
+        button{
+            padding:8px;
+            background:#0b5ed7;
+            color:white;
+            border:none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Landing Page -->
+
+    <div class="main">
+
+        <h1>City Hospital Help Desk</h1>
+
+        <p>
+            Welcome to City Hospital. 
+            Our chatbot helps patients with appointments,
+            emergency services, billing, pharmacy and medical support.
+        </p>
+
+        <div class="section">
+            <h3>Hospital Services</h3>
+
+            <ul>
+                <li>Doctor Appointments</li>
+                <li>Emergency Services</li>
+                <li>Ambulance Facility</li>
+                <li>Laboratory Reports</li>
+                <li>Billing and Insurance</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>Hospital Timings</h3>
+
+            <p>
+                OPD: 9 AM to 5 PM <br>
+                Emergency: 24/7
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Chatbot -->
+
+    <div class="chatbot">
+
+        <h3>Hospital Chatbot</h3>
+
+        <div class="chatbox" id="chatbox">
+
+            <div class="msg bot">
+                Hello! How can I help you?
+            </div>
+
+        </div>
+
+        <input type="text" id="input" placeholder="Enter query">
+
+        <button onclick="reply()">Send</button>
+
+    </div>
+
+    <script>
+
+        function reply(){
+
+            let text =
+            document.getElementById("input").value.toLowerCase();
+
+            let chat =
+            document.getElementById("chatbox");
+
+            if(text=="")
+                return;
+
+            // User message
+
+            chat.innerHTML +=
+            "<div class='msg user'>" + text + "</div>";
+
+            let ans="";
+
+            // Rules
+
+            if(text.includes("appointment")){
+                ans="You can book appointments at reception.";
+            }
+
+            else if(text.includes("doctor")){
+                ans="Doctors are available from 9 AM to 5 PM.";
+            }
+
+            else if(text.includes("emergency")){
+                ans="Emergency ward is open 24/7.";
+            }
+
+            else if(text.includes("ambulance")){
+                ans="Call 108 for ambulance service.";
+            }
+
+            else if(text.includes("bill")){
+                ans="Billing counter is near reception.";
+            }
+
+            else if(text.includes("pharmacy")){
+                ans="Pharmacy is open till 10 PM.";
+            }
+
+            else if(text.includes("report")){
+                ans="Reports are available at laboratory section.";
+            }
+
+            else{
+                ans="Please contact hospital reception.";
+            }
+
+            // Bot message
+
+            chat.innerHTML +=
+            "<div class='msg bot'>" + ans + "</div>";
+
+            document.getElementById("input").value="";
+
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+    </script>
+
+</body>
+</html>
